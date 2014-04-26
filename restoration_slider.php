@@ -32,15 +32,17 @@ function restoration_slider( $atts ) {
         "before_img_alt" => "Before",
         "before_img_title" => "Before",
         "before_img_align" => "center",
+        "before_img_size" => "large",
         'after_img_id' => 0,
         'after_img_alt' => "After",
         "after_img_title" => "After",
         "after_image_align" => "center",
+        "after_img_size" => "large"
     ), $atts ) );
 
     return '<div id="restoration_slider">'
-              . get_image_tag($before_img_id, $before_img_alt, $before_img_title, $before_img_align)
-              . get_image_tag($after_img_id, $after_img_alt, $after_img_title, $after_img_align)
+              . get_image_tag($before_img_id, $before_img_alt, $before_img_title, $before_img_align, $before_img_size)
+              . get_image_tag($after_img_id, $after_img_alt, $after_img_title, $after_img_align, $after_img_size)
            . '</div><script>window.onload=function() {restoration_slider("restoration_slider");}</script>';
 }
 add_shortcode( 'restoration_slider', 'restoration_slider' );
