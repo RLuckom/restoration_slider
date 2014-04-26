@@ -20,7 +20,9 @@ function restoration_slider(div_id) {
         var l = [];
         var n = 0;
         for (n = 0; n < div.childNodes.length; n++) {
-            if (div.childNodes[n].tagName == "IMG" || div.childNodes[n].tagName == "img") {
+            var img_node = (div.childNodes[n].tagName == "IMG"
+                            || div.childNodes[n].tagName == "img");
+            if (img_node) {
                 l.push(div.childNodes[n]);
             }
         }
@@ -55,11 +57,10 @@ function restoration_slider(div_id) {
     var slider_height = 40;
     var slider_left = horiz_middle - (slider_width / 2);
     var slider_top = vert_middle - (slider_height / 2);
-
-    /* TODO: this needs to be fixed to actually replace the div_id div. */
     canvas.setAttribute("width", width);
     canvas.setAttribute("height", height);
-    document.body.appendChild(canvas);
+    div.parentNode.replaceChild(canvas, div);
+    var rect = canvas.getBoundingClientRect();
 
     /* Given a position x, this lines up the divider between the left and
      * right images at x along the x-axis, and resizes the images accordingly.
@@ -94,8 +95,10 @@ function restoration_slider(div_id) {
      * @return (bool) : is point within the slider 'handle?'
      */
     var inside_slider = function(point) {
-        var within_x = slider_left <= point.x <= slider_left + slider_width;
-        var within_y = slider_top <= point.y <= slider_top + slider_height;
+        var within_x = ((slider_left <= point.x)
+                        && (point.x <= (slider_left + slider_width)));
+        var within_y = ((slider_top <= point.y)
+                        && (point.y <= (slider_top + slider_height)));
         return within_x && within_y;
     };
 
@@ -105,16 +108,26 @@ function restoration_slider(div_id) {
      * @param evt (Event)
      * @return (object) : {x: number, y: number}
      */
-    var get_x_y = function(evt) {
-        var rect = canvas.getBoundingClientRect();
+    var get_mouse_x_y = function(evt) {
         var x = evt.clientX - rect.left;
         var y = evt.clientY - rect.top;
         return {x: x, y: y};
     };
 
+    /* Convenience method for getting the canvas-frame coords of a touch.
+     * Note that y = 0 at the top of the canvas, and y = height at the bottom.
+     *
+     * @param evt (Event)
+     * @return (object) : {x: number, y: number}
+     */
+    var get_touch_x_y = function(evt) {
+        return {x: evt.targetTouches[0].pageX - rect.left,
+                y: evt.targetTouches[0].pageY - rect.top};
+    };
+
     /* Callback to set dragging to true if mouse position is within handle. */
     var onMouseDown = function(evt) {
-        var point = get_x_y(evt);
+        var point = get_mouse_x_y(evt);
         if (inside_slider(point)) {
             dragging = true;
         }
@@ -122,9 +135,11 @@ function restoration_slider(div_id) {
 
     /* Callback to recenter on the mouse position if dragging is true */
     var onMouseMove = function(evt) {
-        var point = get_x_y(evt);
+        var point = get_mouse_x_y(evt);
         if (dragging) {
             recenter(point.x);
+        } else {
+            return true;
         }
     };
 
@@ -133,10 +148,39 @@ function restoration_slider(div_id) {
         dragging = false;
     };
 
+    /* Callback to set dragging to true if touch position is within handle. */
+    var onTouchStart = function(evt) {
+
+        /* Don't interfere with 'pinch to zoom' */
+        if (evt.targetTouches.length != 1) {
+            dragging = false;
+            return true;
+        }
+        var point = get_touch_x_y(evt);
+        if (inside_slider(point)) {
+            dragging = true;
+            evt.preventDefault();
+        }
+    };
+
+    /* Callback to recenter on the touch position if dragging is true */
+    var onTouchMove = function(evt) {
+        var point = get_touch_x_y(evt);
+        if (dragging) {
+            evt.preventDefault();
+            recenter(point.x);
+        } else {
+            return true;
+        }
+    };
+
     /* Register the callbacks. */
     canvas.addEventListener("mousedown", onMouseDown);
     canvas.addEventListener("mouseup", onMouseUp);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mouseout", onMouseUp);
+    canvas.addEventListener("touchstart", onTouchStart);
+    canvas.addEventListener("touchend", onMouseUp);
+    canvas.addEventListener("touchmove", onTouchMove);
     console.log("added handlers");
 }
