@@ -23,7 +23,9 @@ function restoration_slider(div_id) {
             var img_node = (div.childNodes[n].tagName == "IMG"
                             || div.childNodes[n].tagName == "img");
             if (img_node) {
-                l.push(div.childNodes[n]);
+                img = new Image();
+                img.src = div.childNodes[n].getAttribute('src');
+                l.push(img);
             }
         }
         return l;
@@ -109,6 +111,7 @@ function restoration_slider(div_id) {
      * @return (object) : {x: number, y: number}
      */
     var get_mouse_x_y = function(evt) {
+        rect = canvas.getBoundingClientRect();
         var x = evt.clientX - rect.left;
         var y = evt.clientY - rect.top;
         return {x: x, y: y};
@@ -121,6 +124,7 @@ function restoration_slider(div_id) {
      * @return (object) : {x: number, y: number}
      */
     var get_touch_x_y = function(evt) {
+        rect = canvas.getBoundingClientRect();
         return {x: evt.targetTouches[0].pageX - rect.left,
                 y: evt.targetTouches[0].pageY - rect.top};
     };
@@ -128,6 +132,8 @@ function restoration_slider(div_id) {
     /* Callback to set dragging to true if mouse position is within handle. */
     var onMouseDown = function(evt) {
         var point = get_mouse_x_y(evt);
+        var s = "width: " + width + " height " + height + " x: " + point.x + " y: " + point.y + " rect " + rect.toSource() + " slider_left: " + slider_left + " slider_top: " + slider_top;
+        console.log(s);
         if (inside_slider(point)) {
             dragging = true;
         }
