@@ -23,8 +23,7 @@ function restoration_slider(div_id) {
             var img_node = (div.childNodes[n].tagName == "IMG"
                             || div.childNodes[n].tagName == "img");
             if (img_node) {
-                img = new Image();
-                img.src = div.childNodes[n].getAttribute('src');
+                img = div.childNodes[n];
                 l.push(img);
             }
         }
@@ -52,7 +51,13 @@ function restoration_slider(div_id) {
     var canvas = document.createElement('canvas');
     var width = imgs[0].width;
     var height = imgs[0].height;
+    var test_img = new Image();
+    test_img.src = imgs[0].getAttribute("src");
+    var full_height = test_img.height;
+    full_width = test_img.width;
     var context = canvas.getContext("2d");
+    var middle_in_orig = 0;
+    var orig_right_width = 0;
     var horiz_middle = width / 2;
     var vert_middle = height / 2;
     var slider_width = 15;
@@ -61,6 +66,7 @@ function restoration_slider(div_id) {
     var slider_top = vert_middle - (slider_height / 2);
     canvas.setAttribute("width", width);
     canvas.setAttribute("height", height);
+    canvas.className = imgs[0].className;
     div.parentNode.replaceChild(canvas, div);
     var rect = canvas.getBoundingClientRect();
 
@@ -71,13 +77,15 @@ function restoration_slider(div_id) {
      */
     var recenter = function(x) {
         horiz_middle = x;
+        middle_in_orig = full_width * (horiz_middle / width); 
         slider_left = horiz_middle - (slider_width / 2);
         slider_top = vert_middle - (slider_height / 2);
-        context.drawImage(imgs[0], 0, 0, horiz_middle, height,
+        context.drawImage(imgs[0], 0, 0, middle_in_orig, full_height,
                           0, 0, horiz_middle, height);
+        orig_right_width = full_width - middle_in_orig;
         right_width = width - horiz_middle;
         context.fillStyle = "#000000";
-        context.drawImage(imgs[1], horiz_middle, 0, right_width, height,
+        context.drawImage(imgs[1], middle_in_orig, 0, orig_right_width, full_height,
                           horiz_middle, 0, right_width, height);
         context.fillRect(horiz_middle - 2 , 0, 4, height);
         context.fillStyle = "#CCCCCC";
