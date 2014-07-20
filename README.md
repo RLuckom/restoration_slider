@@ -4,4 +4,5 @@ To test new images, replace the src attribute of the two ```<img>``` tags in the
 
 Note that the javascript currently checks to make sure that there are exactly two images within the div, and that the images are exactly the same size, to the pixel.
 
-Note also that I haven't done any cross-browser or mobile testing yet, and this is likely to break somewhere.
+A demo is currently live at [Allied Conservation's
+website](http://alliedconservation.com/?page_id=565).
