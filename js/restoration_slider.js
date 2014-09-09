@@ -7,9 +7,9 @@
  * If the images are not the same size, or there are not two of them, this
  * logs an error message and returns.
  *
- * @param div_id (string)
+ * @param div_class (string)
  */
-function restoration_slider(div_id) {
+function restoration_slider(div) {
 
     /*Gets all img nodes within a parent node
      *
@@ -30,7 +30,6 @@ function restoration_slider(div_id) {
         return l;
     };
 
-    var div = document.getElementById(div_id);
     var imgs = get_imgs(div);
 
     /* Check that there are two equal-sized images */
@@ -195,3 +194,16 @@ function restoration_slider(div_id) {
     canvas.addEventListener("touchend", onMouseUp);
     canvas.addEventListener("touchmove", onTouchMove);
 }
+
+window.addEventListener('load', function() {
+	var i, 
+          className = "restoration_slider";
+	var divs = document.getElementsByClassName(className);
+	divs = Array.prototype.slice.call(divs);
+	console.log(divs);
+	while (divs.length > 0) {
+		div = divs.pop();
+		console.log(divs, div, divs.length);
+		restoration_slider(div);
+	}
+});

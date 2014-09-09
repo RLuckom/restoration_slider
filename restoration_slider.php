@@ -40,10 +40,10 @@ function restoration_slider( $atts ) {
         "after_img_size" => "large"
     ), $atts ) );
 
-    return '<div id="restoration_slider">'
+    return '<div class="restoration_slider">'
               . get_image_tag($before_img_id, $before_img_alt, $before_img_title, $before_img_align, $before_img_size)
               . get_image_tag($after_img_id, $after_img_alt, $after_img_title, $after_img_align, $after_img_size)
-           . '</div><script>window.onload=function() {restoration_slider("restoration_slider");}</script>';
+           . '</div>';
 }
 add_shortcode( 'restoration_slider', 'restoration_slider' );
 ?>
