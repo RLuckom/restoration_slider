@@ -53,7 +53,7 @@ function restoration_slider(div) {
     var test_img = new Image();
     test_img.src = imgs[0].getAttribute("src");
     var full_height = test_img.height;
-    full_width = test_img.width;
+    var full_width = test_img.width;
     var context = canvas.getContext("2d");
     var middle_in_orig = 0;
     var orig_right_width = 0;
